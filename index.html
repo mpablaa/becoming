@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F7F4EE">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Becoming</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23F7F4EE'/%3E%3Cpath d='M32 50 V30 M32 34 C32 26 24 24 18 24 C18 32 26 36 32 34 M32 30 C32 22 40 20 46 20 C46 28 38 32 32 30' stroke='%235F6F52' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#F7F4EE; --card:#FFFFFF; --ink:#2E2A24; --muted:#8A8377; --faint:#B9B2A5;
+    --line:#E8E2D6; --accent:#5F6F52; --accent-soft:#EAEDE4; --accent-mid:#9AA88B;
+    --danger:#A05A4E; --radius:18px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:16px; line-height:1.55; min-height:100%;}
+  body{padding-bottom:calc(84px + env(safe-area-inset-bottom));}
+  .wrap{max-width:520px;margin:0 auto;padding:22px 18px 10px;}
+  h1,h2,h3,.serif{font-family:Georgia,"Times New Roman",serif;font-weight:400;letter-spacing:.2px;}
+  h1{font-size:26px;margin:0;}
+  h2{font-size:21px;margin:0 0 6px;}
+  .sub{color:var(--muted);font-size:14px;margin-top:2px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 16px;margin:14px 0;box-shadow:0 1px 2px rgba(60,50,30,.04);}
+  .btn{display:inline-block;border:none;border-radius:999px;padding:12px 22px;font-size:15px;
+    background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent-mid);}
+  .btn.small{padding:8px 16px;font-size:13.5px;}
+  .btn.subtle{background:var(--accent-soft);color:var(--accent);}
+  .btn:disabled{opacity:.4;}
+  .btn.danger{background:transparent;color:var(--danger);border:1px solid #D8BEB8;}
+  textarea,input[type=text]{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;
+    font-family:inherit;font-size:16px;color:var(--ink);background:#FDFCF9;resize:vertical;outline:none;}
+  textarea:focus,input[type=text]:focus{border-color:var(--accent-mid);}
+  textarea{min-height:110px;}
+  .quote{font-family:Georgia,serif;font-style:italic;color:var(--muted);font-size:14.5px;line-height:1.7;}
+  /* chain stepper */
+  .chainviz{display:flex;align-items:center;margin:14px 0 6px;}
+  .cnode{width:11px;height:11px;border-radius:50%;background:var(--line);flex:none;position:relative;}
+  .cnode.done{background:var(--accent-mid);}
+  .cnode.cur{background:var(--accent);box-shadow:0 0 0 5px var(--accent-soft);}
+  .clink{height:2px;background:var(--line);flex:1;}
+  .clink.done{background:var(--accent-mid);}
+  .stagelabels{display:flex;justify-content:space-between;color:var(--faint);font-size:10.5px;margin-top:8px;}
+  /* nav */
+  nav{position:fixed;bottom:0;left:0;right:0;background:rgba(247,244,238,.96);backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:10;}
+  .navin{max-width:520px;margin:0 auto;display:flex;}
+  .navbtn{flex:1;text-align:center;color:var(--faint);font-size:11.5px;cursor:pointer;padding:4px 0;border:none;background:none;font-family:inherit;}
+  .navbtn svg{display:block;margin:0 auto 3px;width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  .navbtn.on{color:var(--accent);}
+  .row{display:flex;gap:10px;align-items:center;}
+  .grow{flex:1;}
+  .pill{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:999px;
+    padding:3px 11px;font-size:12px;}
+  .pill.release{background:#F3E9E0;color:#9A6B4F;}
+  .faintline{border:none;border-top:1px solid var(--line);margin:14px 0;}
+  .entrydate{color:var(--muted);font-size:13px;}
+  .ans{margin:10px 0;}
+  .ans .k{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:2px;}
+  .center{text-align:center;}
+  .stepdots{display:flex;gap:7px;justify-content:center;margin:4px 0 18px;}
+  .sd{width:7px;height:7px;border-radius:50%;background:var(--line);}
+  .sd.on{background:var(--accent);}
+  .sd.past{background:var(--accent-mid);}
+  .bigstage{font-family:Georgia,serif;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);text-align:center;margin-bottom:6px;}
+  .fade{animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .logitem{padding:10px 0;border-bottom:1px solid var(--line);font-size:14.5px;}
+  .logitem:last-child{border-bottom:none;}
+  .logmeta{color:var(--muted);font-size:12px;margin-bottom:2px;}
+  .empty{color:var(--muted);text-align:center;padding:26px 10px;font-size:14.5px;}
+  a.plain{color:var(--accent);}
+  .arrowline{color:var(--faint);font-size:13px;text-align:center;margin:2px 0 0;}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"></div>
+<nav><div class="navin" id="nav"></div></nav>
+
+<script>
+"use strict";
+
+/* ---------- stages ---------- */
+const STAGES = [
+  {key:"thought",  name:"Thought",   plural:"Thoughts"},
+  {key:"words",    name:"Words",     plural:"Words"},
+  {key:"action",   name:"Action",    plural:"Actions"},
+  {key:"behaviour",name:"Behaviour", plural:"Behaviour"},
+  {key:"habit",    name:"Habit",     plural:"Habits"},
+  {key:"character",name:"Character", plural:"Character"},
+  {key:"destiny",  name:"Destiny",   plural:"Destiny"}
+];
+
+const PROMPTS = [
+  {q:"What thought kept returning to you today?",
+   hint:"Thoughts become words. Notice what your mind kept coming back to — hopeful or heavy, either is worth seeing."},
+  {q:"How did that thought show up in what you said?",
+   hint:"Words become actions. What did you say out loud — to others, or quietly to yourself?"},
+  {q:"What did you do because of it?",
+   hint:"Actions become behaviour. One concrete thing you did today — or deliberately didn't."},
+  {q:"Is this becoming a pattern?",
+   hint:"Behaviour becomes habit. Have you caught yourself acting this way before? How often?"},
+  {q:"Which habit did you feed today — and which did you starve?",
+   hint:"Habits become character. Every repetition is a quiet vote for the person you're becoming."},
+  {q:"What kind of person are these habits shaping?",
+   hint:"Character becomes destiny. Are you becoming someone you'd be glad to be?"},
+  {q:"If today repeated itself for a year, where would it lead?",
+   hint:"One honest line to your future self."}
+];
+
+const QUOTE = "Thoughts become words. Words become actions. Actions become behaviour. Behaviour becomes habit. Habit becomes character. Character becomes destiny.";
+
+/* ---------- storage (works offline on the phone; falls back to memory) ---------- */
+const LSKEY = "becoming.v1";
+let memStore = null;
+function loadData(){
+  try{ const r = localStorage.getItem(LSKEY); if(r) return JSON.parse(r); }catch(e){}
+  return memStore || {entries:[], chains:[]};
+}
+let data = loadData();
+function persist(){
+  memStore = data;
+  try{ localStorage.setItem(LSKEY, JSON.stringify(data)); }catch(e){}
+}
+const uid = ()=> Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+/* ---------- ui state ---------- */
+let state = { tab:"today", reflect:null, chainForm:false, chainOpen:null, checkin:null, expanded:{} };
+
+function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function fmtDate(ts){
+  return new Date(ts).toLocaleDateString(undefined,{weekday:"short", day:"numeric", month:"short", year:"numeric"});
+}
+function todayKey(ts){ const d = ts? new Date(ts): new Date(); return d.toISOString().slice(0,10); }
+
+/* ---------- chain visual ---------- */
+function chainViz(stage){
+  let h = '<div class="chainviz">';
+  for(let i=0;i<STAGES.length;i++){
+    const cls = i<stage ? "done" : (i===stage ? "cur" : "");
+    h += `<div class="cnode ${cls}" title="${STAGES[i].name}"></div>`;
+    if(i<STAGES.length-1) h += `<div class="clink ${i<stage?"done":""}"></div>`;
+  }
+  h += '</div><div class="stagelabels"><span>Thought</span><span style="text-align:right">Destiny</span></div>';
+  return h;
+}
+
+/* ---------- views ---------- */
+function viewToday(){
+  const doneToday = data.entries.some(e => todayKey(e.ts) === todayKey());
+  const n = data.entries.length;
+  if(state.reflect) return viewReflect();
+  return `
+  <div class="fade">
+    <h1>Becoming</h1>
+    <div class="sub">A quiet walk from thought to destiny.</div>
+    <div class="card">
+      <div class="quote">“${QUOTE}”</div>
+    </div>
+    <div class="card center">
+      ${doneToday
+        ? `<h2>Today is reflected on.</h2>
+           <div class="sub" style="margin-bottom:14px">You've already sat with today. You can add another reflection if something new is on your mind.</div>`
+        : `<h2>Sit with today</h2>
+           <div class="sub" style="margin-bottom:14px">Seven gentle questions, one for each link in the chain. A few minutes is enough.</div>`}
+      <button class="btn" data-act="startReflect">Begin reflection</button>
+      ${n ? `<div class="sub" style="margin-top:12px">${n} reflection${n===1?"":"s"} so far</div>` : ""}
+    </div>
+  </div>`;
+}
+
+function viewReflect(){
+  const r = state.reflect;
+  if(r.step >= PROMPTS.length) return viewReflectDone();
+  const p = PROMPTS[r.step];
+  const dots = PROMPTS.map((_,i)=>`<div class="sd ${i===r.step?"on":(i<r.step?"past":"")}"></div>`).join("");
+  return `
+  <div class="fade">
+    <div class="bigstage">${STAGES[r.step].plural}</div>
+    <div class="stepdots">${dots}</div>
+    <div class="card">
+      <h2>${p.q}</h2>
+      <div class="sub" style="margin-bottom:12px">${p.hint}</div>
+      <textarea id="reflectInput" placeholder="Write freely — no one else will read this.">${esc(r.answers[r.step]||"")}</textarea>
+      <div class="row" style="margin-top:14px">
+        ${r.step>0 ? '<button class="btn ghost small" data-act="reflectBack">Back</button>' : '<button class="btn ghost small" data-act="cancelReflect">Cancel</button>'}
+        <div class="grow"></div>
+        <button class="btn small" data-act="reflectNext">${r.step===PROMPTS.length-1 ? "Finish" : "Next"}</button>
+      </div>
+    </div>
+    ${r.step < PROMPTS.length-1 ? `<div class="arrowline">${STAGES[r.step].plural.toLowerCase()} become ${STAGES[r.step+1].plural.toLowerCase()} ↓</div>` : ""}
+  </div>`;
+}
+
+function viewReflectDone(){
+  return `
+  <div class="fade center">
+    <div class="card">
+      <h2>Saved.</h2>
+      <div class="sub" style="margin:8px 0 16px">Small notice, gently taken, is how direction changes.<br>See you tomorrow.</div>
+      <button class="btn subtle" data-act="closeReflect">Done</button>
+    </div>
+  </div>`;
+}
+
+function viewChains(){
+  const open = state.chainOpen ? data.chains.find(c=>c.id===state.chainOpen) : null;
+  if(open) return viewChainDetail(open);
+  const active = data.chains.filter(c=>!c.done);
+  const done = data.chains.filter(c=>c.done);
+  return `
+  <div class="fade">
+    <h1>Chains</h1>
+    <div class="sub">Follow one thought on its journey — a seed you're growing, or a pattern you're letting go.</div>
+    ${state.chainForm ? viewChainForm() : `
+      <div style="margin:16px 0"><button class="btn" data-act="newChain">Start a new chain</button></div>`}
+    ${active.length===0 && !state.chainForm ? `<div class="empty">No chains yet.<br>Pick one thought worth watching.</div>` : ""}
+    ${active.map(c=>`
+      <div class="card" data-act="openChain" data-id="${c.id}" style="cursor:pointer">
+        <div class="row">
+          <div class="grow"><b class="serif" style="font-size:17px">${esc(c.title)}</b></div>
+          <span class="pill ${c.kind==="release"?"release":""}">${c.kind==="release"?"letting go":"growing"}</span>
+        </div>
+        ${chainViz(c.stage)}
+        <div class="sub">Now at: <b style="color:var(--accent)">${STAGES[c.stage].name}</b> · ${c.log.length} check-in${c.log.length===1?"":"s"}</div>
+      </div>`).join("")}
+    ${done.length ? `<hr class="faintline"><div class="sub" style="margin-bottom:6px">Completed</div>` + done.map(c=>`
+      <div class="card" data-act="openChain" data-id="${c.id}" style="cursor:pointer;opacity:.75">
+        <b class="serif">${esc(c.title)}</b> <span class="sub">— reached destiny</span>
+      </div>`).join("") : ""}
+  </div>`;
+}
+
+function viewChainForm(){
+  return `
+  <div class="card">
+    <h2>New chain</h2>
+    <div class="sub" style="margin-bottom:10px">Name the thought or intention you want to follow.</div>
+    <input type="text" id="chainTitle" placeholder="e.g. “I want to write every morning”">
+    <div class="sub" style="margin:12px 0 6px">Is this something you're…</div>
+    <div class="row">
+      <button class="btn subtle small" data-act="saveChain" data-kind="grow">Growing 🌱</button>
+      <button class="btn ghost small" data-act="saveChain" data-kind="release">Letting go of</button>
+      <div class="grow"></div>
+      <button class="btn ghost small" data-act="cancelChain">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function viewChainDetail(c){
+  const atEnd = c.stage >= STAGES.length-1;
+  return `
+  <div class="fade">
+    <button class="btn ghost small" data-act="closeChain">← All chains</button>
+    <div class="card">
+      <div class="row">
+        <div class="grow"><h2>${esc(c.title)}</h2></div>
+        <span class="pill ${c.kind==="release"?"release":""}">${c.kind==="release"?"letting go":"growing"}</span>
+      </div>
+      <div class="sub">Started ${fmtDate(c.created)}</div>
+      ${chainViz(c.stage)}
+      <div class="sub" style="margin-top:6px">
+        ${c.done
+          ? `This chain reached <b style="color:var(--accent)">Destiny</b>. ${c.kind==="release"?"You saw the pattern through and let it go.":"What began as a thought became part of who you are."}`
+          : `Now at <b style="color:var(--accent)">${STAGES[c.stage].name}</b>${atEnd?"":` — next it may become <b>${STAGES[c.stage+1].name.toLowerCase()}</b>`}.`}
+      </div>
+      ${c.done? "" : `
+      <hr class="faintline">
+      ${state.checkin===c.id ? `
+        <textarea id="checkinNote" placeholder="${c.kind==="release"
+          ? "What happened with this pattern lately? Any slips, any wins?"
+          : "What happened with this lately? Any words spoken, steps taken?"}"></textarea>
+        <div class="row" style="margin-top:10px;flex-wrap:wrap">
+          <button class="btn small" data-act="saveCheckin" data-id="${c.id}" data-adv="0">Save note</button>
+          ${atEnd
+            ? `<button class="btn subtle small" data-act="saveCheckin" data-id="${c.id}" data-adv="done">It has become destiny ✦</button>`
+            : `<button class="btn subtle small" data-act="saveCheckin" data-id="${c.id}" data-adv="1">Save & advance to ${STAGES[c.stage+1].name}</button>`}
+          <button class="btn ghost small" data-act="cancelCheckin">Cancel</button>
+        </div>`
+      : `<button class="btn" data-act="startCheckin" data-id="${c.id}">Check in</button>`}
+      `}
+    </div>
+    ${c.log.length? `<div class="card">
+      <div class="sub" style="margin-bottom:4px">Journey so far</div>
+      ${c.log.slice().reverse().map(l=>`
+        <div class="logitem">
+          <div class="logmeta">${fmtDate(l.ts)} · at ${STAGES[l.stage].name.toLowerCase()}${l.advanced?` → moved to ${l.advanced}`:""}</div>
+          ${esc(l.note)||"<span class='sub'>(no note)</span>"}
+        </div>`).join("")}
+    </div>`:""}
+    <div class="center" style="margin:18px 0">
+      <button class="btn danger small" data-act="deleteChain" data-id="${c.id}">Delete this chain</button>
+    </div>
+  </div>`;
+}
+
+function viewJournal(){
+  const es = data.entries.slice().reverse();
+  return `
+  <div class="fade">
+    <h1>Journal</h1>
+    <div class="sub">Your daily reflections, kept privately on this phone.</div>
+    ${es.length===0 ? `<div class="empty">Nothing here yet.<br>Your first reflection will appear here.</div>` : ""}
+    ${es.map(e=>{
+      const openCls = state.expanded[e.id];
+      const preview = (e.answers.find(a=>a && a.trim()) || "").slice(0,80);
+      return `
+      <div class="card">
+        <div data-act="toggleEntry" data-id="${e.id}" style="cursor:pointer">
+          <div class="entrydate">${fmtDate(e.ts)}</div>
+          ${openCls? "" : `<div class="sub" style="margin-top:4px">${esc(preview)}${preview.length>=80?"…":""}</div>`}
+        </div>
+        ${openCls ? e.answers.map((a,i)=> a && a.trim()? `
+          <div class="ans"><div class="k">${STAGES[i].plural}</div><div>${esc(a)}</div></div>`:"").join("") + `
+          <hr class="faintline">
+          <div class="row">
+            <div class="grow"></div>
+            <button class="btn danger small" data-act="deleteEntry" data-id="${e.id}">Delete</button>
+          </div>`:""}
+      </div>`;}).join("")}
+  </div>`;
+}
+
+function viewMore(){
+  return `
+  <div class="fade">
+    <h1>About</h1>
+    <div class="card">
+      <div class="quote">“${QUOTE}”</div>
+      <hr class="faintline">
+      <div class="sub">Becoming is a private reflection journal built around this chain. Everything you write stays in this browser on your phone — nothing is sent anywhere.</div>
+    </div>
+    <div class="card">
+      <h2>Your data</h2>
+      <div class="sub" style="margin-bottom:12px">${data.entries.length} reflection${data.entries.length===1?"":"s"} · ${data.chains.length} chain${data.chains.length===1?"":"s"}</div>
+      <div class="row" style="flex-wrap:wrap">
+        <button class="btn subtle small" data-act="exportData">Back up (download)</button>
+        <button class="btn ghost small" data-act="importData">Restore from file</button>
+      </div>
+      <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+      <hr class="faintline">
+      <button class="btn danger small" data-act="wipe">Erase everything</button>
+      <div class="sub" style="margin-top:10px;font-size:12.5px">Tip: since data lives only on this phone, download a backup now and then. Clearing the browser's site data would erase it.</div>
+    </div>
+    <div class="card">
+      <h2>Install as an app</h2>
+      <div class="sub">In Chrome on Android: open the ⋮ menu → <b>Add to Home screen</b> (or <b>Install app</b>). Becoming will then open from its own icon and works fully offline.</div>
+    </div>
+  </div>`;
+}
+
+/* ---------- nav ---------- */
+const NAV = [
+  {id:"today", label:"Today", icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>'},
+  {id:"chains", label:"Chains", icon:'<svg viewBox="0 0 24 24"><path d="M9 12h6M5 12a3.5 3.5 0 0 1 3.5-3.5H10M14 8.5h1.5A3.5 3.5 0 0 1 19 12a3.5 3.5 0 0 1-3.5 3.5H14M10 15.5H8.5A3.5 3.5 0 0 1 5 12"/></svg>'},
+  {id:"journal", label:"Journal", icon:'<svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M5 4v14M9 8h5M9 12h5"/></svg>'},
+  {id:"more", label:"About", icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></svg>'}
+];
+
+/* ---------- render ---------- */
+function render(){
+  const app = document.getElementById("app");
+  app.innerHTML =
+    state.tab==="today"   ? viewToday()   :
+    state.tab==="chains"  ? viewChains()  :
+    state.tab==="journal" ? viewJournal() : viewMore();
+  document.getElementById("nav").innerHTML = NAV.map(n=>
+    `<button class="navbtn ${state.tab===n.id?"on":""}" data-act="tab" data-id="${n.id}">${n.icon}${n.label}</button>`
+  ).join("");
+  const ta = document.getElementById("reflectInput");
+  if(ta){ ta.focus(); }
+}
+
+/* ---------- actions ---------- */
+function grabReflectInput(){
+  const ta = document.getElementById("reflectInput");
+  if(ta && state.reflect && state.reflect.step < PROMPTS.length) state.reflect.answers[state.reflect.step] = ta.value;
+}
+
+document.body.addEventListener("click", (ev)=>{
+  const t = ev.target.closest("[data-act]");
+  if(!t) return;
+  const act = t.dataset.act, id = t.dataset.id;
+  switch(act){
+    case "tab":
+      grabReflectInput();
+      state.tab = id; state.chainOpen=null; state.chainForm=false; state.checkin=null;
+      break;
+    case "startReflect":
+      state.reflect = {step:0, answers:Array(PROMPTS.length).fill("")};
+      break;
+    case "reflectBack": grabReflectInput(); state.reflect.step--; break;
+    case "reflectNext":
+      grabReflectInput();
+      state.reflect.step++;
+      if(state.reflect.step >= PROMPTS.length){
+        if(state.reflect.answers.some(a=>a && a.trim())){
+          data.entries.push({id:uid(), ts:Date.now(), answers:state.reflect.answers});
+          persist();
+        }
+      }
+      break;
+    case "cancelReflect": state.reflect=null; break;
+    case "closeReflect": state.reflect=null; break;
+    case "newChain": state.chainForm=true; break;
+    case "cancelChain": state.chainForm=false; break;
+    case "saveChain": {
+      const inp = document.getElementById("chainTitle");
+      const title = inp ? inp.value.trim() : "";
+      if(!title){ if(inp) inp.focus(); return; }
+      const c = {id:uid(), title, kind:t.dataset.kind, stage:0, created:Date.now(), log:[], done:false};
+      data.chains.push(c); persist();
+      state.chainForm=false; state.chainOpen=c.id;
+      break;
+    }
+    case "openChain": state.chainOpen=id; state.checkin=null; break;
+    case "closeChain": state.chainOpen=null; state.checkin=null; break;
+    case "startCheckin": state.checkin=id; break;
+    case "cancelCheckin": state.checkin=null; break;
+    case "saveCheckin": {
+      const c = data.chains.find(x=>x.id===id); if(!c) return;
+      const note = (document.getElementById("checkinNote")||{}).value || "";
+      const adv = t.dataset.adv;
+      const entry = {ts:Date.now(), stage:c.stage, note:note.trim(), advanced:null};
+      if(adv==="1" && c.stage < STAGES.length-1){ c.stage++; entry.advanced = STAGES[c.stage].name; }
+      else if(adv==="done"){ c.done=true; entry.advanced = "Destiny ✦"; }
+      c.log.push(entry); persist();
+      state.checkin=null;
+      break;
+    }
+    case "deleteChain":
+      if(confirm("Delete this chain and its whole journey?")){
+        data.chains = data.chains.filter(x=>x.id!==id); persist();
+        state.chainOpen=null;
+      }
+      break;
+    case "toggleEntry": state.expanded[id] = !state.expanded[id]; break;
+    case "deleteEntry":
+      if(confirm("Delete this reflection?")){
+        data.entries = data.entries.filter(x=>x.id!==id); persist();
+      }
+      break;
+    case "exportData": {
+      const blob = new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "becoming-backup-" + todayKey() + ".json";
+      a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+      return;
+    }
+    case "importData": {
+      const f = document.getElementById("importFile");
+      f.onchange = ()=>{
+        const file = f.files[0]; if(!file) return;
+        const rd = new FileReader();
+        rd.onload = ()=>{
+          try{
+            const d = JSON.parse(rd.result);
+            if(Array.isArray(d.entries) && Array.isArray(d.chains)){ data = d; persist(); render(); }
+            else alert("That file doesn't look like a Becoming backup.");
+          }catch(e){ alert("Couldn't read that file."); }
+        };
+        rd.readAsText(file);
+      };
+      f.click();
+      return;
+    }
+    case "wipe":
+      if(confirm("Erase all reflections and chains? This cannot be undone.")){
+        data = {entries:[], chains:[]}; persist();
+      }
+      break;
+    default: return;
+  }
+  render();
+});
+
+render();
+
+/* ---------- offline support (when served over https) ---------- */
+if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+  navigator.serviceWorker.register("sw.js").catch(function(){});
+}
+</script>
+</body>
+</html>
