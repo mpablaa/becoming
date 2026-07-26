@@ -100,20 +100,18 @@ const STAGES = [
 ];
 
 const PROMPTS = [
-  {q:"What thought kept returning to you today?",
-   hint:"Thoughts become words. Notice what your mind kept coming back to — hopeful or heavy, either is worth seeing."},
-  {q:"How did that thought show up in what you said?",
-   hint:"Words become actions. What did you say out loud — to others, or quietly to yourself?"},
-  {q:"What did you do because of it?",
-   hint:"Actions become behaviour. One concrete thing you did today — or deliberately didn't."},
-  {q:"Is this becoming a pattern?",
-   hint:"Behaviour becomes habit. Have you caught yourself acting this way before? How often?"},
-  {q:"Which habit did you feed today — and which did you starve?",
-   hint:"Habits become character. Every repetition is a quiet vote for the person you're becoming."},
-  {q:"What kind of person are these habits shaping?",
-   hint:"Character becomes destiny. Are you becoming someone you'd be glad to be?"},
-  {q:"If today repeated itself for a year, where would it lead?",
-   hint:"One honest line to your future self."}
+  {label:"Thoughts",  q:"What thought kept returning to you today?",              hint:"Thoughts become words."},
+  {label:"Words",     q:"What words did you use today?",                          hint:"Words become actions."},
+  {label:"Actions",   q:"What actions did you take today?",                       hint:"Actions become behaviour."},
+  {label:"Behaviour", q:"What behaviour is it becoming?",                         hint:"Behaviour becomes habit."},
+  {label:"Habit",     q:"What habit is it forming?",                              hint:"Habit becomes character."},
+  {label:"Character", q:"What character is it shaping?",                          hint:"Character becomes destiny."},
+  {label:"Destiny",   q:"What destiny is it leading to?",                         hint:""},
+  {label:"Words · now onwards",     q:"What words would you use from now onwards?",        hint:"Words become actions."},
+  {label:"Actions · now onwards",   q:"What actions would you take from now onwards?",     hint:"Actions become behaviour."},
+  {label:"Behaviour · now onwards", q:"What behaviour would you choose from now onwards?", hint:"Behaviour becomes habit."},
+  {label:"Character · now onwards", q:"What character would you build from now onwards?",  hint:"Character becomes destiny."},
+  {label:"Destiny · now onwards",   q:"What destiny would you choose from now onwards?",   hint:""}
 ];
 
 const QUOTE = "Thoughts become words. Words become actions. Actions become behaviour. Behaviour becomes habit. Habit becomes character. Character becomes destiny.";
@@ -161,16 +159,11 @@ function viewToday(){
   return `
   <div class="fade">
     <h1>Becoming</h1>
-    <div class="sub">A quiet walk from thought to destiny.</div>
     <div class="card">
       <div class="quote">“${QUOTE}”</div>
     </div>
     <div class="card center">
-      ${doneToday
-        ? `<h2>Today is reflected on.</h2>
-           <div class="sub" style="margin-bottom:14px">You've already sat with today. You can add another reflection if something new is on your mind.</div>`
-        : `<h2>Sit with today</h2>
-           <div class="sub" style="margin-bottom:14px">Seven gentle questions, one for each link in the chain. A few minutes is enough.</div>`}
+      ${doneToday ? `<div class="sub" style="margin-bottom:14px">Reflected today</div>` : ""}
       <button class="btn" data-act="startReflect">Begin reflection</button>
       ${n ? `<div class="sub" style="margin-top:12px">${n} reflection${n===1?"":"s"} so far</div>` : ""}
     </div>
@@ -184,19 +177,18 @@ function viewReflect(){
   const dots = PROMPTS.map((_,i)=>`<div class="sd ${i===r.step?"on":(i<r.step?"past":"")}"></div>`).join("");
   return `
   <div class="fade">
-    <div class="bigstage">${STAGES[r.step].plural}</div>
+    <div class="bigstage">${p.label}</div>
     <div class="stepdots">${dots}</div>
     <div class="card">
       <h2>${p.q}</h2>
-      <div class="sub" style="margin-bottom:12px">${p.hint}</div>
-      <textarea id="reflectInput" placeholder="Write freely — no one else will read this.">${esc(r.answers[r.step]||"")}</textarea>
+      ${p.hint? `<div class="sub" style="margin-bottom:12px">${p.hint}</div>`:""}
+      <textarea id="reflectInput" placeholder="Write here">${esc(r.answers[r.step]||"")}</textarea>
       <div class="row" style="margin-top:14px">
         ${r.step>0 ? '<button class="btn ghost small" data-act="reflectBack">Back</button>' : '<button class="btn ghost small" data-act="cancelReflect">Cancel</button>'}
         <div class="grow"></div>
         <button class="btn small" data-act="reflectNext">${r.step===PROMPTS.length-1 ? "Finish" : "Next"}</button>
       </div>
     </div>
-    ${r.step < PROMPTS.length-1 ? `<div class="arrowline">${STAGES[r.step].plural.toLowerCase()} become ${STAGES[r.step+1].plural.toLowerCase()} ↓</div>` : ""}
   </div>`;
 }
 
@@ -205,7 +197,7 @@ function viewReflectDone(){
   <div class="fade center">
     <div class="card">
       <h2>Saved.</h2>
-      <div class="sub" style="margin:8px 0 16px">Small notice, gently taken, is how direction changes.<br>See you tomorrow.</div>
+      <div style="margin:8px 0 16px"></div>
       <button class="btn subtle" data-act="closeReflect">Done</button>
     </div>
   </div>`;
@@ -219,10 +211,10 @@ function viewChains(){
   return `
   <div class="fade">
     <h1>Chains</h1>
-    <div class="sub">Follow one thought on its journey — a seed you're growing, or a pattern you're letting go.</div>
+    <div class="sub">Thought → words → action → behaviour → habit → character → destiny.</div>
     ${state.chainForm ? viewChainForm() : `
       <div style="margin:16px 0"><button class="btn" data-act="newChain">Start a new chain</button></div>`}
-    ${active.length===0 && !state.chainForm ? `<div class="empty">No chains yet.<br>Pick one thought worth watching.</div>` : ""}
+    ${active.length===0 && !state.chainForm ? `<div class="empty">No chains yet.</div>` : ""}
     ${active.map(c=>`
       <div class="card" data-act="openChain" data-id="${c.id}" style="cursor:pointer">
         <div class="row">
@@ -269,15 +261,13 @@ function viewChainDetail(c){
       ${chainViz(c.stage)}
       <div class="sub" style="margin-top:6px">
         ${c.done
-          ? `This chain reached <b style="color:var(--accent)">Destiny</b>. ${c.kind==="release"?"You saw the pattern through and let it go.":"What began as a thought became part of who you are."}`
+          ? `This chain reached <b style="color:var(--accent)">Destiny</b>.`
           : `Now at <b style="color:var(--accent)">${STAGES[c.stage].name}</b>${atEnd?"":` — next it may become <b>${STAGES[c.stage+1].name.toLowerCase()}</b>`}.`}
       </div>
       ${c.done? "" : `
       <hr class="faintline">
       ${state.checkin===c.id ? `
-        <textarea id="checkinNote" placeholder="${c.kind==="release"
-          ? "What happened with this pattern lately? Any slips, any wins?"
-          : "What happened with this lately? Any words spoken, steps taken?"}"></textarea>
+        <textarea id="checkinNote" placeholder="Write here"></textarea>
         <div class="row" style="margin-top:10px;flex-wrap:wrap">
           <button class="btn small" data-act="saveCheckin" data-id="${c.id}" data-adv="0">Save note</button>
           ${atEnd
@@ -307,8 +297,8 @@ function viewJournal(){
   return `
   <div class="fade">
     <h1>Journal</h1>
-    <div class="sub">Your daily reflections, kept privately on this phone.</div>
-    ${es.length===0 ? `<div class="empty">Nothing here yet.<br>Your first reflection will appear here.</div>` : ""}
+    <div class="sub">Your daily reflections.</div>
+    ${es.length===0 ? `<div class="empty">Nothing here yet.</div>` : ""}
     ${es.map(e=>{
       const openCls = state.expanded[e.id];
       const preview = (e.answers.find(a=>a && a.trim()) || "").slice(0,80);
@@ -319,7 +309,7 @@ function viewJournal(){
           ${openCls? "" : `<div class="sub" style="margin-top:4px">${esc(preview)}${preview.length>=80?"…":""}</div>`}
         </div>
         ${openCls ? e.answers.map((a,i)=> a && a.trim()? `
-          <div class="ans"><div class="k">${STAGES[i].plural}</div><div>${esc(a)}</div></div>`:"").join("") + `
+          <div class="ans"><div class="k">${PROMPTS[i]?PROMPTS[i].label:""}</div><div>${esc(a)}</div></div>`:"").join("") + `
           <hr class="faintline">
           <div class="row">
             <div class="grow"></div>
@@ -336,7 +326,7 @@ function viewMore(){
     <div class="card">
       <div class="quote">“${QUOTE}”</div>
       <hr class="faintline">
-      <div class="sub">Becoming is a private reflection journal built around this chain. Everything you write stays in this browser on your phone — nothing is sent anywhere.</div>
+      <div class="sub">Everything you write stays on this phone. Nothing is sent anywhere.</div>
     </div>
     <div class="card">
       <h2>Your data</h2>
