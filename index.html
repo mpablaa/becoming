@@ -100,18 +100,17 @@ const STAGES = [
 ];
 
 const PROMPTS = [
-  {label:"Thoughts",  q:"What thought kept returning to you today?",              hint:"Thoughts become words."},
-  {label:"Words",     q:"What words did you use today?",                          hint:"Words become actions."},
-  {label:"Actions",   q:"What actions did you take today?",                       hint:"Actions become behaviour."},
-  {label:"Behaviour", q:"What behaviour is it becoming?",                         hint:"Behaviour becomes habit."},
-  {label:"Habit",     q:"What habit is it forming?",                              hint:"Habit becomes character."},
-  {label:"Character", q:"What character is it shaping?",                          hint:"Character becomes destiny."},
-  {label:"Destiny",   q:"What destiny is it leading to?",                         hint:""},
-  {label:"Words · now onwards",     q:"What words would you use from now onwards?",        hint:"Words become actions."},
-  {label:"Actions · now onwards",   q:"What actions would you take from now onwards?",     hint:"Actions become behaviour."},
-  {label:"Behaviour · now onwards", q:"What behaviour would you choose from now onwards?", hint:"Behaviour becomes habit."},
-  {label:"Character · now onwards", q:"What character would you build from now onwards?",  hint:"Character becomes destiny."},
-  {label:"Destiny · now onwards",   q:"What destiny would you choose from now onwards?",   hint:""}
+  {label:"Thoughts",  q:"Thoughts become words."},
+  {label:"Words",     q:"Words become actions."},
+  {label:"Actions",   q:"Actions become behaviour."},
+  {label:"Behaviour", q:"Behaviour becomes habit."},
+  {label:"Habit",     q:"Habit becomes character."},
+  {label:"Character", q:"Character becomes destiny."},
+  {label:"Words · now onwards",     q:"What words would you use now onwards?"},
+  {label:"Actions · now onwards",   q:"What actions would you use now onwards?"},
+  {label:"Behaviour · now onwards", q:"What behaviour would you use now onwards?"},
+  {label:"Character · now onwards", q:"What character would you use now onwards?"},
+  {label:"Destiny · now onwards",   q:"What destiny would you use now onwards?"}
 ];
 
 const QUOTE = "Thoughts become words. Words become actions. Actions become behaviour. Behaviour becomes habit. Habit becomes character. Character becomes destiny.";
@@ -163,7 +162,6 @@ function viewToday(){
       <div class="quote">“${QUOTE}”</div>
     </div>
     <div class="card center">
-      ${doneToday ? `<div class="sub" style="margin-bottom:14px">Reflected today</div>` : ""}
       <button class="btn" data-act="startReflect">Begin reflection</button>
       ${n ? `<div class="sub" style="margin-top:12px">${n} reflection${n===1?"":"s"} so far</div>` : ""}
     </div>
@@ -181,8 +179,7 @@ function viewReflect(){
     <div class="stepdots">${dots}</div>
     <div class="card">
       <h2>${p.q}</h2>
-      ${p.hint? `<div class="sub" style="margin-bottom:12px">${p.hint}</div>`:""}
-      <textarea id="reflectInput" placeholder="Write here">${esc(r.answers[r.step]||"")}</textarea>
+      <textarea id="reflectInput" placeholder="" style="margin-top:8px">${esc(r.answers[r.step]||"")}</textarea>
       <div class="row" style="margin-top:14px">
         ${r.step>0 ? '<button class="btn ghost small" data-act="reflectBack">Back</button>' : '<button class="btn ghost small" data-act="cancelReflect">Cancel</button>'}
         <div class="grow"></div>
@@ -235,10 +232,8 @@ function viewChainForm(){
   return `
   <div class="card">
     <h2>New chain</h2>
-    <div class="sub" style="margin-bottom:10px">Name the thought or intention you want to follow.</div>
-    <input type="text" id="chainTitle" placeholder="e.g. “I want to write every morning”">
-    <div class="sub" style="margin:12px 0 6px">Is this something you're…</div>
-    <div class="row">
+    <input type="text" id="chainTitle" placeholder="Thought" style="margin-top:8px">
+    <div class="row" style="margin-top:12px">
       <button class="btn subtle small" data-act="saveChain" data-kind="grow">Growing 🌱</button>
       <button class="btn ghost small" data-act="saveChain" data-kind="release">Letting go of</button>
       <div class="grow"></div>
@@ -262,7 +257,7 @@ function viewChainDetail(c){
       <div class="sub" style="margin-top:6px">
         ${c.done
           ? `This chain reached <b style="color:var(--accent)">Destiny</b>.`
-          : `Now at <b style="color:var(--accent)">${STAGES[c.stage].name}</b>${atEnd?"":` — next it may become <b>${STAGES[c.stage+1].name.toLowerCase()}</b>`}.`}
+          : `Now at: <b style="color:var(--accent)">${STAGES[c.stage].name}</b>`}
       </div>
       ${c.done? "" : `
       <hr class="faintline">
@@ -297,7 +292,6 @@ function viewJournal(){
   return `
   <div class="fade">
     <h1>Journal</h1>
-    <div class="sub">Your daily reflections.</div>
     ${es.length===0 ? `<div class="empty">Nothing here yet.</div>` : ""}
     ${es.map(e=>{
       const openCls = state.expanded[e.id];
@@ -325,8 +319,6 @@ function viewMore(){
     <h1>About</h1>
     <div class="card">
       <div class="quote">“${QUOTE}”</div>
-      <hr class="faintline">
-      <div class="sub">Everything you write stays on this phone. Nothing is sent anywhere.</div>
     </div>
     <div class="card">
       <h2>Your data</h2>
